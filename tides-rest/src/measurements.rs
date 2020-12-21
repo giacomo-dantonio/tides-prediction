@@ -1,6 +1,6 @@
 use minreq;
 use serde::Deserialize;
-use chrono::{self, DateTime, Utc};
+use chrono::{self, DateTime, Utc, Timelike};
 
 static BASE_URL : &'static str =
     "https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations";
@@ -26,7 +26,13 @@ impl Measurement {
             "{}/{}/W/measurements?start=P{}D",
             BASE_URL, station_id, days);
         let response = minreq::get(url).send()?;
-        response.json()
+        let data : Vec<Measurement> = response.json()?;
+        let hours_data : Vec<Measurement> = data
+            .into_iter()
+            .filter(|mes| mes.timestamp.minute() == 0)
+            .collect();
+
+        Ok(hours_data)
     }
 
     /// Query the API for the water measurements from
