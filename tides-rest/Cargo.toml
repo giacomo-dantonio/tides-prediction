@@ -10,3 +10,4 @@ edition = "2018"
 minreq = { version = "2.2.1", features = ["json-using-serde", "https-rustls"] }
 serde = { version = "1.0", features = ["derive"] }
 chrono = { version = "0.4", features = ["serde"] }
+tides-signals = { path = "../tides-signals" }
