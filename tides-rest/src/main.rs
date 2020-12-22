@@ -4,7 +4,7 @@ use tides_rest::predictions;
 // use std::f32::consts::PI;
 
 fn main() -> Result<(), minreq::Error> {
-    let data = Measurement::query_station_id(
+    let data = Measurement::query_hours(
         "d3f822a0-e201-4a61-8913-589c74818ae0", 30)?;
 
     let signal = predictions::reconstruct(&data);

@@ -32,7 +32,7 @@ mod tests {
 
     #[test]
     fn parameter_test() {
-        let measurements : Vec<Measurement> = Measurement::query_station_id_all(
+        let measurements : Vec<Measurement> = Measurement::query_hours_all(
             "d3f822a0-e201-4a61-8913-589c74818ae0")
             .unwrap();
 
@@ -47,6 +47,21 @@ mod tests {
 
         for (expected, actual) in cmp {
             assert_eq!(expected, actual);
+        }
+    }
+
+    #[test]
+    fn reconstruct_test() {
+        let data = Measurement::query_hours(
+            "d3f822a0-e201-4a61-8913-589c74818ae0", 30)
+            .unwrap();
+    
+        let signal = reconstruct(&data);
+    
+        let cmp = data.iter()
+            .map(|mes| (mes.value, signal(mes.timestamp)));
+        for (expected, actual) in cmp {
+            assert!((actual - expected).abs() <= 0.1)
         }
     }
 }

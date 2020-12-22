@@ -18,15 +18,34 @@ pub struct Measurement {
 
 impl Measurement {
     /// Query the API for the water measurements from
-    /// the last days
-    pub fn query_station_id(station_id : &str, days: u8)
+    /// the last days.
+    /// The data series will contain one value per minute.
+    pub fn query(station_id : &str, days: u8)
         -> Result<Vec<Measurement>, minreq::Error>
     {
         let url = format!(
             "{}/{}/W/measurements?start=P{}D",
             BASE_URL, station_id, days);
         let response = minreq::get(url).send()?;
-        let data : Vec<Measurement> = response.json()?;
+        response.json()
+    }
+
+    /// Query the API for the water measurements from
+    /// the last 30 days
+    /// The data series will contain one value per minute.
+    pub fn query_all(station_id : &str)
+    -> Result<Vec<Measurement>, minreq::Error>
+    {
+        Measurement::query(station_id, 30u8)
+    }
+
+    /// Query the API for the water measurements from
+    /// the last days
+    /// The data series will contain one value per hour.
+    pub fn query_hours(station_id : &str, days: u8)
+        -> Result<Vec<Measurement>, minreq::Error>
+    {
+        let data = Measurement::query(station_id, days)?;
         let hours_data : Vec<Measurement> = data
             .into_iter()
             .filter(|mes| mes.timestamp.minute() == 0)
@@ -37,10 +56,11 @@ impl Measurement {
 
     /// Query the API for the water measurements from
     /// the last 30 days
-    pub fn query_station_id_all(station_id : &str)
+    /// The data series will contain one value per hour.
+    pub fn query_hours_all(station_id : &str)
     -> Result<Vec<Measurement>, minreq::Error>
     {
-        Measurement::query_station_id(station_id, 30u8)
+        Measurement::query_hours(station_id, 30u8)
     }
 }
 
@@ -51,7 +71,7 @@ mod tests {
 
     #[test]
     fn query_station_id_test() {
-        let data = Measurement::query_station_id(
+        let data = Measurement::query(
             "d3f822a0-e201-4a61-8913-589c74818ae0", 1);
         
         assert!(data.is_ok());
