@@ -1,18 +1,20 @@
 // use tides_rest::stations::Station;
-use tides_rest::measurements::Measurement;
-use tides_rest::predictions;
+use tides_rest;
+// use tides_signals::predictions;
 // use std::f32::consts::PI;
 
 fn main() -> Result<(), minreq::Error> {
-    let data = Measurement::query_hours(
-        "d3f822a0-e201-4a61-8913-589c74818ae0", 30)?;
+    let data = tides_rest::query_hours(
+        "d3f822a0-e201-4a61-8913-589c74818ae0", 1)?;
 
-    let signal = predictions::reconstruct(&data);
+    println!("{:#?}", data);
 
-    let cmp : Vec<(f32, f32)> = data.iter()
-        .map(|mes| (mes.value, signal(mes.timestamp)))
-        .collect();
-    println!("{:#?}", cmp);
+    // let signal = predictions::reconstruct(&data);
+
+    // let cmp : Vec<(f32, f32)> = data.iter()
+    //     .map(|mes| (mes.value, signal(mes.timestamp)))
+    //     .collect();
+    // println!("{:#?}", cmp);
 
     // println!("{:#?}", data);
 
