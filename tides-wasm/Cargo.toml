@@ -12,6 +12,7 @@ default = ["console_error_panic_hook"]
 
 [dependencies]
 wasm-bindgen = "0.2.63"
+chrono = { version = "0.4" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tides-signals = { path = "../tides-signals" }
