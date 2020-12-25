@@ -5,14 +5,14 @@
 extern crate wasm_bindgen_test;
 use wasm_bindgen_test::*;
 
+use tides_signals;
 use tides_signals::measurements::Series;
-use tides_wasm::utils;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
 #[wasm_bindgen_test]
 fn test_json() {
-    utils::set_panic_hook();
+    tides_signals::set_panic_hook();
 
     let json_str = "[
         {
