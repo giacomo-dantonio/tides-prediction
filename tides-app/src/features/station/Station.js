@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import {Series} from 'tides-signals';
@@ -10,7 +10,6 @@ export default function Station(props) {
     const dispatch = useDispatch();
 
     const measurements = useSelector(selectMeasurements);
-    let predictions = null;
     // FIXME: use state for this
     if (measurements.length === 0) {
         dispatch(fetchMeasurements(stationId));
@@ -21,9 +20,22 @@ export default function Station(props) {
             measurements.map(mes => mes.value),
         );
 
-        predictions = measurements
+        // FIXME: batch evaluate all timestamps
+        const predictions = measurements
             .map(entry => series.evaluate(entry.timestamp));
+
+        return <table>
+            {
+                measurements.map((mes, i) => {
+                    return <tr>
+                        <td>{Number(mes.timestamp)}</td>
+                        <td>{mes.value}</td>
+                        <td>{predictions[i]}</td>
+                    </tr>;
+                })
+            }
+        </table>;
     }
 
-    return <div>{measurements}</div>;
+    return <div/>;
 }
