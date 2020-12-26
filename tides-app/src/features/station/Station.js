@@ -37,15 +37,14 @@ export default function Station(props) {
                 measurements.map(mes => mes.value),
             );
     
-            // FIXME: batch evaluate all timestamps
-            const computed = measurements
-                .map(entry => {
-                    const {timestamp} = entry;
-                    return {
-                        timestamp,
-                        value: series.evaluate(BigInt(timestamp)) 
-                    };
-                });
+            const values = series.batch_evaluate(
+                measurements.map(mes => BigInt(mes.timestamp)));
+            const computed = measurements.map((mes, i) => {
+                return {
+                    timestamp: mes.timestamp,
+                    value: values[i]
+                }
+            });
             dispatch(batchSet(computed));
         }
 

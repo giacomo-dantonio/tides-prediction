@@ -53,4 +53,10 @@ impl Series {
             NaiveDateTime::from_timestamp(timestamp, 0), Utc);
         (self.signal)(dt)
     }
+
+    pub fn batch_evaluate(&self, timestamps: &[i64]) -> Vec<f32> {
+        timestamps.iter()
+            .map(|&timestamp| self.evaluate(timestamp))
+            .collect()
+    }
 }
