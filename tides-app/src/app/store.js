@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import measurementsReducer from '../features/station/stationSlice';
+import measurements from '../features/station/measurementsSlice';
 
 export default configureStore({
   reducer: {
-    measurements: measurementsReducer,
+    measurements,
   },
 });
