@@ -3,17 +3,14 @@ import { createSlice } from '@reduxjs/toolkit';
 export const predictionsSlice = createSlice({
     name: 'predictions',
     initialState: {
-        value: {},
+        value: [],
     },
     reducers: {
         batchSet: (state, action) => {
-            for (const entry of action.payload) {
-                state.value[entry.timestamp] = entry.value;
-            }
+            state.value = action.payload;
         },
         set: (state, action) => {
-            const {timestamp, value} = action.payload;
-            state.value[timestamp] = value;
+            state.value.push(action.payload);
         }
     }
 });
