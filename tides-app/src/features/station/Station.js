@@ -47,12 +47,18 @@ export default function Station(props) {
                 measurements.map(mes => BigInt(mes.timestamp)),
                 measurements.map(mes => mes.value),
             );
-    
+   
+            const timestamps = measurements.map(mes => mes.timestamp);
+            const lastTimestemp = timestamps[timestamps.length - 1];
+            const weekHours = 7 /* days */ * 24 /*hours*/;
+            for (let i = 1; i < weekHours; i++) {
+                timestamps.push(lastTimestemp + i * 3600 /* seconds */);
+            }
             const values = series.batch_evaluate(
-                measurements.map(mes => BigInt(mes.timestamp)));
-            const computed = measurements.map((mes, i) => {
+                timestamps.map(timestamp => BigInt(timestamp)));
+            const computed = timestamps.map((timestamp, i) => {
                 return {
-                    timestamp: mes.timestamp,
+                    timestamp,
                     value: values[i]
                 }
             });
