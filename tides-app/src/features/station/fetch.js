@@ -1,9 +1,11 @@
+/* global BigInt */
+
 import fetchJson from "fetch-json";
 
 const BASE_URL = "https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations";
 
 function getUnixTimestamp(date) {
-    return date.getTime() / 1000;
+    return BigInt(date.getTime() / 1000);
 }
 
 export default async function fetchMeasurements(stationId) {
@@ -21,7 +23,9 @@ export default async function fetchMeasurements(stationId) {
             processed_data.push(Object.assign(
                 {},
                 entry,
-                {timestamp: getUnixTimestamp(date)}
+                {
+                    timestamp: getUnixTimestamp(date)
+                }
             ));
         }
     }

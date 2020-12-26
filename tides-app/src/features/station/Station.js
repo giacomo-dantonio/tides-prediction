@@ -1,15 +1,28 @@
-import React from 'react';
-import fetchMeasurements from './fetch';
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
 import {Series} from 'tides-signals';
-import { series_evaluate } from 'tides-signals/tides_signals_bg.wasm';
+
+import {fetchMeasurements, selectMeasurements} from './stationSlice';
 
 export default function Station(props) {
     const {stationId} = props;
+    const dispatch = useDispatch();
 
-    const measurements = fetchMeasurements(stationId);
-    let series = Series.from_json(JSON.stringify(measurements));
-    for (const entry of measurements) {
-        entry.prediction = series.evaluate(entry.timestamp);
+    const measurements = useSelector(selectMeasurements);
+    let predictions = null;
+    // FIXME: use state for this
+    if (measurements.length === 0) {
+        dispatch(fetchMeasurements(stationId));
+    }
+    else {
+        let series = Series.from_data(
+            measurements.map(mes => mes.timestamp),
+            measurements.map(mes => mes.value),
+        );
+
+        predictions = measurements
+            .map(entry => series.evaluate(entry.timestamp));
     }
 
     return <div>{measurements}</div>;

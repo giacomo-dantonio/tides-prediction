@@ -3,6 +3,8 @@ use chrono::{self, DateTime, NaiveDateTime, Utc};
 use wasm_bindgen::prelude::*;
 use crate::predictions;
 
+extern crate web_sys;
+
 /// Represent a station measurement that can be queried on pegelonline.
 #[derive(Deserialize, Debug)]
 pub struct Measurement {
@@ -18,10 +20,25 @@ pub struct Series {
 
 #[wasm_bindgen]
 impl Series {
-    pub fn from_json(json_str: &str) -> Series {
-        let measurements = serde_json::from_str(json_str)
-            .unwrap_or(vec![]);
+    pub fn from_data(timestamps: &[i64], values: &[f32]) -> Series {
+        // web_sys::console::log_1(format!("{}", json_str));
+        web_sys::console::log_1(&"Got json string".into());
+
+        let measurements = timestamps.iter().zip(values)
+            .map(|(&ts, &val)| Measurement {
+                timestamp: DateTime::<Utc>::from_utc(
+                    NaiveDateTime::from_timestamp(ts, 0), Utc),
+                value: val
+            })
+            .collect();
+
+        web_sys::console::log_1(&"deserialized".into());
+
+        let s = format!("Got {:#?}", measurements);
+        web_sys::console::log_1(&s.into());
+
         let signal = Box::new(predictions::reconstruct(&measurements)); 
+        web_sys::console::log_1(&"reconstructed".into());
 
         Series {
             measurements,
