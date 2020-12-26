@@ -7,10 +7,13 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "fetch-json": "^2.2.9",
+    "node-fetch": "^2.6.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-redux": "^7.2.2",
-    "react-scripts": "4.0.1"
+    "react-scripts": "4.0.1",
+    "tides-signals": "file:../tides-signals/pkg"
   },
   "scripts": {
     "start": "react-scripts start",
