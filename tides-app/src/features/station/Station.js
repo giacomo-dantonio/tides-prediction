@@ -1,11 +1,20 @@
 /* global BigInt */
 
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 
 import {Series} from 'tides-signals';
 
-import {fetchMeasurements, selectMeasurements, FETCH_STATE} from './measurementsSlice';
+import {
+    fetchMeasurements,
+    selectMeasurements,
+    FETCH_STATE
+} from './measurementsSlice';
+
+import {
+    batchSet,
+    selectPredictions
+} from './predictionsSlice';
 
 export default function Station(props) {
     const {stationId} = props;
@@ -13,27 +22,41 @@ export default function Station(props) {
 
     // FIXME show anymations for fetching and computing states
     const {fetching, value: measurements} = useSelector(selectMeasurements);
+    const predictions = useSelector(selectPredictions);
+
     if (fetching === FETCH_STATE.INITIAL) {
         dispatch(fetchMeasurements(stationId));
     }
     else if (fetching === FETCH_STATE.FETCHED) {
-        let series = Series.from_data(
-            measurements.map(mes => BigInt(mes.timestamp)),
-            measurements.map(mes => mes.value),
-        );
-
-        // FIXME: batch evaluate all timestamps
-        const predictions = measurements
-            .map(entry => series.evaluate(BigInt(entry.timestamp)));
+        // FIXME: find out a better way to check if predictions have
+        // already be computed
+        if (Object.keys(predictions).length === 0)
+        {
+            let series = Series.from_data(
+                measurements.map(mes => BigInt(mes.timestamp)),
+                measurements.map(mes => mes.value),
+            );
+    
+            // FIXME: batch evaluate all timestamps
+            const computed = measurements
+                .map(entry => {
+                    const {timestamp} = entry;
+                    return {
+                        timestamp,
+                        value: series.evaluate(BigInt(timestamp)) 
+                    };
+                });
+            dispatch(batchSet(computed));
+        }
 
         return <table>
             <tbody>
             {
                 measurements.map((mes, i) => {
-                    return <tr key={Number(mes.timestamp)}>
-                        <td>{Number(mes.timestamp)}</td>
+                    return <tr key={mes.timestamp}>
+                        <td>{mes.timestamp}</td>
                         <td>{mes.value}</td>
-                        <td>{predictions[i]}</td>
+                        <td>{predictions[mes.timestamp]}</td>
                     </tr>;
                 })
             }
