@@ -64,11 +64,9 @@ export default function Station(props) {
             });
             dispatch(batchSet(computed));
         }
-        else {
-            dataSeries.push(makeDataset("Prediction", predictions, "blue"));
-        }
     }
 
+    dataSeries.push(makeDataset("Prediction", predictions, "blue"));
     return <div>
         <Chart series={dataSeries} />
     </div>;
