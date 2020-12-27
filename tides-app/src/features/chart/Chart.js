@@ -6,12 +6,38 @@ export default function ChartComponent(props) {
     const canvasLabel = props.label || "Data chart";
 
     // initialize timeRange to 3 days (in minutes)
-    const [timeRange, setTimeRange] = useState(3 * 24 * 60);
+    const [timeRange, setTimeRange] = useState({
+        center: Date.now(),
+        width: 3 * 24 * 60
+    });
     const [chart, setChart] = useState(null);
+    const [panning, setPanning] = useState(false);
 
     const eventCallback = event => {
-        if (event.type === "wheel") {
-            setTimeRange(timeRange - 10 * event.deltaY);
+        switch (event.type) {
+        case "wheel":
+            setTimeRange({
+                ...timeRange,
+                width: timeRange.width - 1E2 * event.deltaY
+            });
+            break;
+        case "mousedown":
+            console.log("mousedown");
+            setPanning(true);
+            break;
+        case "mouseup":
+            console.log("mouseup");
+            setPanning(false);
+            break;
+        case "mousemove":
+            if (panning) {
+                console.log("mousemove", event.movementX, event.offsetX);
+                setTimeRange({
+                    ...timeRange,
+                    center: timeRange.center + 1E6 * event.movementX
+                });
+            }
+            break;
         }
     };
 
@@ -38,7 +64,7 @@ export default function ChartComponent(props) {
             chart.options.scales.xAxes[0].ticks = makeTicks(timeRange);
             chart.update();
         }
-    }, [timeRange]);
+    }, [panning, timeRange]);
 
     useEffect(() => {
         if (chart !== null) {
@@ -62,12 +88,14 @@ function makeOptions(args) {
             animationDuration: 0
         },
         events: [
-            'mousemove',
-            'mouseout',
-            'click',
-            'touchstart',
-            'touchmove',
-            'wheel'
+            "mousedown",
+            "mousemove",
+            "mouseup",
+            "mouseout",
+            "click",
+            "touchstart",
+            "touchmove",
+            "wheel"
         ],
         onHover: args.eventCallback,
         scales: {
@@ -112,8 +140,8 @@ function makeDatasets(series) {
 
 function makeTicks(timeRange) {
     return {
-        min: new Date(Date.now() - timeRange * 60 * 1000),
-        max: new Date(Date.now() + timeRange * 60 * 1000),
+        min: new Date(timeRange.center - timeRange.width * 60 * 1000),
+        max: new Date(timeRange.center + timeRange.width * 60 * 1000),
         sampleSize: 7,
     };
 }
