@@ -15,6 +15,7 @@ import {
     batchSet,
     selectPredictions
 } from './predictionsSlice';
+import {selectStation} from './selectedStationSlice';
 
 const GAUGE_COLOR = "#fcc653";
 const PREDICTION_COLOR = "#53c1fc";
@@ -27,13 +28,13 @@ function makeDataset(name, entries, color) {
     };
 }
 
-export default function Station(props) {
-    const {stationId} = props;
+export default function Station() {
     const dispatch = useDispatch();
 
-    // FIXME show anymations for fetching and computing states
+    // FIXME show animations for fetching and computing states
     const {fetching, value: measurements} = useSelector(selectMeasurements);
     const predictions = useSelector(selectPredictions);
+    const stationId = useSelector(selectStation);
 
     if (fetching === FETCH_STATE.INITIAL) {
         dispatch(fetchMeasurements(stationId));

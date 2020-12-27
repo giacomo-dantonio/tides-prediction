@@ -11,11 +11,14 @@ export const predictionsSlice = createSlice({
         },
         set: (state, action) => {
             state.value.push(action.payload);
+        },
+        clear: (state, action) => {
+            state.value = [];
         }
     }
 });
 
-export const { set, batchSet } = predictionsSlice.actions;
+export const { set, batchSet, clear } = predictionsSlice.actions;
 
 export const selectPredictions = state => state.predictions.value;
 

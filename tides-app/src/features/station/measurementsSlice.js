@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import fetchFromApi from './fetch';
+import {fetchMeasurements as fetchFromApi} from '../utils/fetch';
 
 export const FETCH_STATE = {
     INITIAL: 0,
@@ -26,10 +26,14 @@ export const measurementsSlice = createSlice({
                 ? FETCH_STATE.FETCHING
                 : FETCH_STATE.FETCHED;
             },
+        clear: state => {
+            state.value.fetching = FETCH_STATE.INITIAL;
+            state.value.value = [];
+        }
     }
 });
 
-export const { append, set, fetching } = measurementsSlice.actions;
+export const { append, set, fetching, clear } = measurementsSlice.actions;
 
 export const fetchMeasurements = stationId => dispatch => {
     dispatch(fetching(true));

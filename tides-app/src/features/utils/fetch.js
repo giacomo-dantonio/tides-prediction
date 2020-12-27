@@ -6,7 +6,7 @@ function getUnixTimestamp(date) {
     return date.getTime() / 1000;
 }
 
-export default async function fetchMeasurements(stationId) {
+export async function fetchMeasurements(stationId) {
     const url = `${BASE_URL}/${stationId}/W/measurements?start=P30D`;
     const raw_data = await fetchJson.get(url);
 
@@ -28,4 +28,13 @@ export default async function fetchMeasurements(stationId) {
         }
     }
     return processed_data;
+}
+
+export async function fetchStations(location) {
+    const url = (location !== null && location !== undefined)
+        ? `${BASE_URL}?latitude=${location.latitude}&longitude=${location.longitude}&radius=${location.radius}`
+        : BASE_URL;
+    const data = await fetchJson.get(url);
+    data.sort((lhs, rhs) => lhs.longname < rhs.longname ? -1 : 1);
+    return data;
 }

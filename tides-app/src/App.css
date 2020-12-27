@@ -1,7 +1,20 @@
 .App {
-  text-align: left;
+    display: flex;
 }
 
-.App-link {
-  color: rgb(112, 76, 182);
+.side-panel {
+    width: 300px;
+}
+
+.station-chart {
+    flex-grow: 1;
+}
+
+.station-dropdown {
+    display: block;
+}
+
+.station-dropdown select,
+.station-dropdown label {
+    display: block;
 }
