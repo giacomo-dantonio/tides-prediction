@@ -15,12 +15,14 @@ export default function ChartComponent(props) {
 
     const eventCallback = event => {
         switch (event.type) {
-        case "wheel":
+        case "wheel": {
+            const width = timeRange.width + 1E2 * event.deltaY;
             setTimeRange({
                 ...timeRange,
-                width: timeRange.width - 1E2 * event.deltaY
+                width: Math.max(3 * 60, width)
             });
             break;
+        }
         case "mousedown":
             console.log("mousedown");
             setPanning(true);

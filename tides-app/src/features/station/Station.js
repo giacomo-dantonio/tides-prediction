@@ -16,6 +16,9 @@ import {
     selectPredictions
 } from './predictionsSlice';
 
+const GAUGE_COLOR = "#fcc653";
+const PREDICTION_COLOR = "#53c1fc";
+
 function makeDataset(name, entries, color) {
     return {
         name,
@@ -37,7 +40,7 @@ export default function Station(props) {
         return <div/>;
     }
 
-    const dataSeries = [makeDataset("Measured Pegel", measurements, "red")];
+    const dataSeries = [makeDataset("Measured gauge", measurements, GAUGE_COLOR)];
 
     if (fetching === FETCH_STATE.FETCHED) {
         // FIXME: find out a better way to check if predictions have
@@ -47,8 +50,10 @@ export default function Station(props) {
                 measurements.map(mes => BigInt(mes.timestamp)),
                 measurements.map(mes => mes.value),
             );
-   
-            const timestamps = measurements.map(mes => mes.timestamp);
+
+            const timestamps = measurements
+                .slice(measurements.length - 2)
+                .map(mes => mes.timestamp);
             const lastTimestemp = timestamps[timestamps.length - 1];
             const weekHours = 7 /* days */ * 24 /*hours*/;
             for (let i = 1; i < weekHours; i++) {
@@ -66,7 +71,7 @@ export default function Station(props) {
         }
     }
 
-    dataSeries.push(makeDataset("Prediction", predictions, "blue"));
+    dataSeries.push(makeDataset("Prediction", predictions, PREDICTION_COLOR));
     return <div>
         <Chart series={dataSeries} />
     </div>;
