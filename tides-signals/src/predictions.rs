@@ -12,7 +12,7 @@ fn parameter(measurements : &Vec<Measurement>)
     };
 
     move |dt : DateTime<Utc>|
-        (dt - from).num_hours() as f32
+        (dt - from).num_minutes() as f32
 }
 
 pub fn reconstruct(measurements : &Vec<Measurement>) -> impl Fn(DateTime<Utc>) -> f32

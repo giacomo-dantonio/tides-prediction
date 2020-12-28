@@ -28,6 +28,13 @@ function makeDataset(name, entries, color) {
     };
 }
 
+function filterHours(dataSeries) {
+    return dataSeries.filter(entry => {
+        const date = new Date(entry.timestamp * 1000);
+        return date.getMinutes() === 0;
+    });
+}
+
 export default function Station() {
     const dispatch = useDispatch();
 
@@ -41,7 +48,9 @@ export default function Station() {
         return <div/>;
     }
 
-    const dataSeries = [makeDataset("Measured gauge", measurements, GAUGE_COLOR)];
+    const hourlyMeasurements = filterHours(measurements); 
+    const dataSeries = [
+        makeDataset("Measured gauge", hourlyMeasurements, GAUGE_COLOR)];
 
     if (fetching === FETCH_STATE.FETCHED) {
         // FIXME: find out a better way to check if predictions have
@@ -52,8 +61,8 @@ export default function Station() {
                 measurements.map(mes => mes.value),
             );
 
-            const timestamps = measurements
-                .slice(measurements.length - 2)
+            const timestamps = hourlyMeasurements
+                .slice(Math.max(0, hourlyMeasurements.length - 10))
                 .map(mes => mes.timestamp);
             const lastTimestemp = timestamps[timestamps.length - 1];
             const weekHours = 7 /* days */ * 24 /*hours*/;

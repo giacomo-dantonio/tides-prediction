@@ -15,17 +15,13 @@ export async function fetchMeasurements(stationId) {
         // entry.timestamp is here an rfc3xxx date.
         const date = new Date(entry.timestamp);
 
-        // keep only the full hours.
-        if (date.getMinutes() === 0)
-        {
-            processed_data.push(Object.assign(
-                {},
-                entry,
-                {
-                    timestamp: getUnixTimestamp(date)
-                }
-            ));
-        }
+        processed_data.push(Object.assign(
+            {},
+            entry,
+            {
+                timestamp: getUnixTimestamp(date)
+            }
+        ));
     }
     return processed_data;
 }
