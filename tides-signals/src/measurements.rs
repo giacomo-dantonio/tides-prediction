@@ -25,61 +25,59 @@ impl Series {
         }
     }
 
-    fn find_bracket_points<T>(&self, from: i64, to: i64, resolution: i64, cmp: &T) -> Vec<i64>
+    /// Return a collection of timestamp, such that the interval between
+    /// them contains a local minimum/maximum.
+    fn find_bracket_points<T>(&self, from: i64, to: i64, resolution: i64, cmp: &T) -> Vec<(i64, i64)>
         where T: Fn(f32, f32) -> f32
     {
+        let mut result = vec![];
         let start = from + (to - from) % resolution;
         let steps = (to - from) / resolution;
 
-        (0 .. steps)
-            .map(|i| start + resolution * i)
-            .filter(|&ts| self.is_extreme(ts, resolution, cmp))
-            .collect()
-    }
 
-    fn is_extreme<T>(&self, timestamp: i64, resolution: i64, cmp: &T) -> bool
-        where T : Fn(f32, f32) -> f32
-    {
-        let (from, to) = (-3, 3);
-        let local_values = (from .. to)
-            .map(|i| (timestamp + i * resolution))
-            .map(|ts| self.evaluate(ts));
-        let value = self.evaluate(timestamp);
-        let initial = local_values.clone().next().unwrap_or(0f32);
-        let minmax = local_values.fold(initial, cmp);
 
-        value == minmax
+        for i in 0 .. steps {
+            let lts = start + resolution * i;
+            let mts = lts + resolution;
+            let rts = lts + 2 * resolution;
+
+            // FIXME: avoid evaluating each timestamp three times
+            let lvalue = self.evaluate(lts);
+            let mvalue = self.evaluate(mts);
+            let rvalue = self.evaluate(rts);
+
+            if cmp(mvalue, lvalue) == mvalue && cmp(mvalue, rvalue) == mvalue {
+                result.push((lts, rts));
+            }
+        }
+
+        result
     }
 
     pub fn find_extreme<T>(&self, from: i64, to: i64, cmp: &T) -> Vec<i64>
         where T : Fn(f32, f32) -> f32
     {
-        // We start by checking only the hours values and
-        // then refine the search until we reach minutes.
-        // But if to and from are closer than 10 hours apart,
-        // we will use a different scale.
-
-        // 1 hour = 3600
-        // but the resolution here needs to be a power of 2 * 60
-        let mut resolution = 3840.min((to - from) / 10);
-        let mut extremes = self.find_bracket_points(from, to, resolution, cmp);
-
-        while resolution >= 60 {
-            extremes = extremes
-            .iter()
-            .map(|ts|
-                self.find_bracket_points(
-                    ts - resolution,
-                    ts + resolution,
-                    resolution / 2,
-                    cmp
-                )
-            )
-            .flatten()
-            .collect();
-            resolution = resolution / 2
-        }
-        extremes
+        // First we bracket all the local minima/maxima with intervals
+        // of 2 hours length.
+        let hour_brackets = self.find_bracket_points(from, to, 3600, cmp);
+        hour_brackets.iter().map(|&(lb, up)| {
+            // Then for each interval we look for the global minimum/maximum
+            // inside the interval.
+            // We do this by evaluating every minute.
+            let (min_timestep, _min_val) = (lb .. up).step_by(60)
+            .map(|ts| (ts, self.evaluate(ts)))
+            .fold(
+                (0, cmp(-1f32, 1f32) * -f32::INFINITY),
+                |(acc_ts, acc_value), (ts, value)| {
+                    if cmp(acc_value, value) == acc_value {
+                        (acc_ts, acc_value)
+                    }
+                    else {
+                        (ts, value)
+                    }
+                });
+            min_timestep
+        }).collect()
     }
 }
 
