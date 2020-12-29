@@ -20,7 +20,7 @@ fn reconstruct_test() {
 #[test]
 fn extremes_test() {
     let data = tides_rest::query(
-        "d3f822a0-e201-4a61-8913-589c74818ae0", 2)
+        "d3f822a0-e201-4a61-8913-589c74818ae0", 6)
         .unwrap();
 
     let series = Series::from_json(data.clone());

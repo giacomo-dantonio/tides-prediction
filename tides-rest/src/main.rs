@@ -7,7 +7,7 @@ use tides_signals::measurements::Series;
 
 fn main() -> Result<(), minreq::Error> {
     let data = tides_rest::query(
-        "d3f822a0-e201-4a61-8913-589c74818ae0", 2)
+        "d3f822a0-e201-4a61-8913-589c74818ae0", 6)
         .unwrap();
 
     let series = Series::from_json(data.clone());

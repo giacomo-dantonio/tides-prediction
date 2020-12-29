@@ -34,19 +34,19 @@ impl Series {
         let start = from + (to - from) % resolution;
         let steps = (to - from) / resolution;
 
+        let values : Vec<f32> = (0 .. steps)
+        .map(|offset| self.evaluate(start + resolution * offset))
+        .collect();
 
-
-        for i in 0 .. steps {
-            let lts = start + resolution * i;
-            let mts = lts + resolution;
-            let rts = lts + 2 * resolution;
-
-            // FIXME: avoid evaluating each timestamp three times
-            let lvalue = self.evaluate(lts);
-            let mvalue = self.evaluate(mts);
-            let rvalue = self.evaluate(rts);
+        for i in 0 .. (steps - 2) {
+            let index = i as usize;
+            let lvalue = values[index];
+            let mvalue = values[index + 1];
+            let rvalue = values[index + 2];
 
             if cmp(mvalue, lvalue) == mvalue && cmp(mvalue, rvalue) == mvalue {
+                let lts = start + resolution * i;
+                let rts = start + resolution * (i + 2);
                 result.push((lts, rts));
             }
         }
@@ -54,28 +54,43 @@ impl Series {
         result
     }
 
+    fn min_timestep<T, U>(iter: U, cmp: &T) -> (i64, f32)
+        where T : Fn(f32, f32) -> f32, U : Iterator<Item=(i64, f32)>
+    {
+        let (min_timestep, min_val) = iter.fold(
+            (0, cmp(-1f32, 1f32) * -f32::INFINITY),
+            |(acc_ts, acc_value), (ts, value)| {
+                if cmp(acc_value, value) == acc_value {
+                    (acc_ts, acc_value)
+                }
+                else {
+                    (ts, value)
+                }
+            });
+
+        (min_timestep, min_val)
+    }
+
     pub fn find_extreme<T>(&self, from: i64, to: i64, cmp: &T) -> Vec<i64>
         where T : Fn(f32, f32) -> f32
     {
         // First we bracket all the local minima/maxima with intervals
-        // of 2 hours length.
-        let hour_brackets = self.find_bracket_points(from, to, 3600, cmp);
-        hour_brackets.iter().map(|&(lb, up)| {
-            // Then for each interval we look for the global minimum/maximum
-            // inside the interval.
-            // We do this by evaluating every minute.
-            let (min_timestep, _min_val) = (lb .. up).step_by(60)
-            .map(|ts| (ts, self.evaluate(ts)))
-            .fold(
-                (0, cmp(-1f32, 1f32) * -f32::INFINITY),
-                |(acc_ts, acc_value), (ts, value)| {
-                    if cmp(acc_value, value) == acc_value {
-                        (acc_ts, acc_value)
-                    }
-                    else {
-                        (ts, value)
-                    }
-                });
+        // of 4 hours length.
+        let four_hour_brackets = self.find_bracket_points(from, to, 2 * 3600, cmp);
+        four_hour_brackets.iter().map(|&(from, to)| {
+            // Then we repeat the bracketing process with a width of 1 hour
+            let hour_brackets = self.find_bracket_points(from, to, 1800, cmp);
+            let (min_timestep, _min_val) = Series::min_timestep(
+                hour_brackets.iter()
+                .map(|&(from, to)| {
+                    // Inside the 60 minutes bracket we search for the
+                    // global minimum/maximum
+                    Series::min_timestep(
+                        (from .. to).step_by(60)
+                        .map(|ts| (ts, self.evaluate(ts))),
+                        cmp)
+                }),
+                cmp);
             min_timestep
         }).collect()
     }
