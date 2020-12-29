@@ -1,5 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+import {
+    FETCH_MEASUREMENTS,
+    append as appendLoading,
+    remove as removeLoading
+} from '../slices/loadingSlice';
 import {fetchMeasurements as fetchFromApi} from '../utils/fetch';
 
 export const FETCH_STATE = {
@@ -37,10 +42,15 @@ export const { append, set, fetching, clear } = measurementsSlice.actions;
 
 export const fetchMeasurements = stationId => dispatch => {
     dispatch(fetching(true));
+    dispatch(appendLoading({
+        key: FETCH_MEASUREMENTS,
+        message: "Fetching measurement data and computing predictions."
+    }));
     fetchFromApi(stationId)
         .then(measurements => {
             dispatch(set(measurements));
             dispatch(fetching(false));
+            dispatch(removeLoading(FETCH_MEASUREMENTS));
         });
 };
 

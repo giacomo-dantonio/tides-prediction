@@ -4,7 +4,7 @@ export const extremesSlice = createSlice({
     name: 'extremes',
     initialState: {
         value: {
-            center: Date.now(),
+            center: Math.round(Date.now() / 1000),
             minima: [],
             maxima: []
         },

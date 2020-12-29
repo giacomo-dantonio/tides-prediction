@@ -3,6 +3,7 @@ import './App.css';
 import Station from './components/station/Station';
 import StationChooser from './components/panel/StationChooser';
 import LowHightTides from './components/panel/LowHighTides';
+import Loading from './components/loading/Loading';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <StationChooser/>
         <LowHightTides/>
       </div>
+      <Loading/>
     </div>
   );
 }

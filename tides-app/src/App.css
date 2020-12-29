@@ -2,9 +2,53 @@
     display: flex;
 }
 
+.loading-panel {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background-color: rgba(255, 255, 255, 0.7);
+
+    display: flex;           /* establish flex container */
+    flex-direction: column;  /* make main axis vertical */
+    justify-content: center; /* center items vertically, in this case */
+    align-items: center;
+
+    font-size: 30pt;
+    color: #53c1fc;
+}
+
+.loading-waves {
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+}
+
+
+@media (prefers-reduced-motion: no-preference) {
+    .loading-waves {
+      animation: loading-waves-float infinite 3s ease-in-out;
+    }
+}
+
+
+@keyframes loading-waves-float {
+    0% {
+      transform: translate(0px, 0px);
+    }
+    50% {
+      transform: translate(10px, 20px);
+    }
+    100% {
+      transform: translate(0px, 0px)
+    }
+}
+
 .side-panel {
     width: 300px;
-    padding: 20px 0px;
+    height: 100vh;
+    overflow-y: scroll;
 }
 
 .station-chart {
@@ -12,11 +56,13 @@
 }
 
 .station-dropdown {
+    padding: 20px 10px;
     display: block;
 }
 
 .station-dropdown select,
 .station-dropdown label {
+    width: 100%;
     display: block;
 }
 
@@ -29,11 +75,11 @@
 }
 
 .side-panel .high-tide-entry {
-    background-color: #fcebc7;
+    background-color: #fce9bf;
 }
 
 .side-panel .high-tide-entry .label {
-    color: #fc7253;
+    color: #f7a902;
 }
 
 .side-panel td.label {

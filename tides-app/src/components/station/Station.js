@@ -16,7 +16,11 @@ import {
     selectPredictions
 } from '../../slices/predictionsSlice';
 import {selectStation} from '../../slices/selectedStationSlice';
-import {select as selectExtremes, set as setExtremes} from '../../slices/extremesSlice';
+import {
+    select as selectExtremes,
+    set as setExtremes
+} from '../../slices/extremesSlice';
+
 
 const GAUGE_COLOR = "#fcc653";
 const PREDICTION_COLOR = "#53c1fc";
@@ -64,32 +68,7 @@ export default function Station() {
             // FIXME: find out a better way to check if predictions have
             // already be computed
             if (predictions.length === 0) {
-                const data_series = Series.from_data(
-                    measurements.map(mes => BigInt(mes.timestamp)),
-                    measurements.map(mes => mes.value),
-                );
-                setSeries(data_series);
-    
-                // Compute predictions
-                const hourlyMeasurements = filterHours(measurements); 
-                const timestamps = hourlyMeasurements
-                    .slice(Math.max(0, hourlyMeasurements.length - 10))
-                    .map(mes => mes.timestamp);
-                const lastTimestemp = timestamps[timestamps.length - 1];
-                const weekHours = 7 /* days */ * 24 /*hours*/;
-                for (let i = 1; i < weekHours; i++) {
-                    timestamps.push(lastTimestemp + i * 3600 /* seconds */);
-                }
-    
-                const values = data_series.batch_evaluate(
-                    timestamps.map(timestamp => BigInt(timestamp)));
-                const computed = timestamps.map((timestamp, i) => {
-                    return {
-                        timestamp,
-                        value: values[i]
-                    }
-                });
-                dispatch(batchSet(computed));
+                computePredictions();
             }
         }
     }, [fetching]);
@@ -102,6 +81,35 @@ export default function Station() {
     return <div>
         <Chart series={dataSeries} />
     </div>;
+
+    function computePredictions() {
+        const data_series = Series.from_data(
+            measurements.map(mes => BigInt(mes.timestamp)),
+            measurements.map(mes => mes.value)
+        );
+        setSeries(data_series);
+
+        // Compute predictions
+        const hourlyMeasurements = filterHours(measurements);
+        const timestamps = hourlyMeasurements
+            .slice(Math.max(0, hourlyMeasurements.length - 10))
+            .map(mes => mes.timestamp);
+        const lastTimestemp = timestamps[timestamps.length - 1];
+        const weekHours = 7 /* days */ * 24 /*hours*/;
+        for (let i = 1; i < weekHours; i++) {
+            timestamps.push(lastTimestemp + i * 3600 /* seconds */);
+        }
+
+        const values = data_series.batch_evaluate(
+            timestamps.map(timestamp => BigInt(timestamp)));
+        const computed = timestamps.map((timestamp, i) => {
+            return {
+                timestamp,
+                value: values[i]
+            };
+        });
+        dispatch(batchSet(computed));
+    }
 
     function computeLowHighTides() {
         if (series !== null) {
