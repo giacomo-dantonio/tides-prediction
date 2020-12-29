@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {useDispatch} from 'react-redux';
 import Chart from 'chart.js';
 
-import { setCenter } from '../station/extremesSlice';
+import { setCenter } from '../../slices/extremesSlice';
 
 export default function ChartComponent(props) {
     const dispatch = useDispatch();

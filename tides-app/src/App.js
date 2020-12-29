@@ -1,8 +1,8 @@
 import React from 'react';
 import './App.css';
-import Station from './features/station';
-import StationChooser from './features/panel/StationChooser';
-import LowHightTides from './features/panel/LowHighTides';
+import Station from './components/station/Station';
+import StationChooser from './components/panel/StationChooser';
+import LowHightTides from './components/panel/LowHighTides';
 
 function App() {
   return (

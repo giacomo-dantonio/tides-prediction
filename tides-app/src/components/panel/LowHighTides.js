@@ -1,7 +1,7 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
-import {select as selectExtremes, set as setExtremes} from '../station/extremesSlice';
+import {select as selectExtremes, set as setExtremes} from '../../slices/extremesSlice';
 
 function dateStr(timestamp)
 {

@@ -1,9 +1,9 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
-import {FETCH_STATE, fetchStations, selectStations} from './stationsSlice';
-import {selectStation, setStation} from '../station/selectedStationSlice';
-import {clearAndThen} from '../utils/actions';
+import {FETCH_STATE, fetchStations, selectStations} from '../../slices/stationsSlice';
+import {selectStation, setStation} from '../../slices/selectedStationSlice';
+import {clearAndThen} from '../../utils/actions';
 
 const capitalize = name => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 

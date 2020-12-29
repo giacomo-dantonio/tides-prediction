@@ -10,13 +10,13 @@ import {
     fetchMeasurements,
     selectMeasurements,
     FETCH_STATE
-} from './measurementsSlice';
+} from '../../slices/measurementsSlice';
 import {
     batchSet,
     selectPredictions
-} from './predictionsSlice';
-import {selectStation} from './selectedStationSlice';
-import {select as selectExtremes, set as setExtremes} from './extremesSlice';
+} from '../../slices/predictionsSlice';
+import {selectStation} from '../../slices/selectedStationSlice';
+import {select as selectExtremes, set as setExtremes} from '../../slices/extremesSlice';
 
 const GAUGE_COLOR = "#fcc653";
 const PREDICTION_COLOR = "#53c1fc";
