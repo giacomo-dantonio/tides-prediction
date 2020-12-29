@@ -4,6 +4,7 @@
 
 .side-panel {
     width: 300px;
+    padding: 20px 0px;
 }
 
 .station-chart {
@@ -17,4 +18,31 @@
 .station-dropdown select,
 .station-dropdown label {
     display: block;
+}
+
+.side-panel .low-tide-entry {
+    background-color: #d9f0fc;
+}
+
+.side-panel .low-tide-entry .label {
+    color: #536cfc;
+}
+
+.side-panel .high-tide-entry {
+    background-color: #fcebc7;
+}
+
+.side-panel .high-tide-entry .label {
+    color: #fc7253;
+}
+
+.side-panel td.label {
+    font-style: italic;
+    font-size: 10pt;
+}
+
+.side-panel .low-tide-entry,
+.side-panel .high-tide-entry {
+    padding: 10px;
+    margin: 10px;
 }

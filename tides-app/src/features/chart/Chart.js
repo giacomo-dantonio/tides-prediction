@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import {useDispatch} from 'react-redux';
 import Chart from 'chart.js';
 
+import { setCenter } from '../station/extremesSlice';
+
 export default function ChartComponent(props) {
+    const dispatch = useDispatch();
+
     const canvasId = props.canvasId || "chart-canvas";
     const canvasLabel = props.label || "Data chart";
 
     // initialize timeRange to 3 days (in minutes)
+
     const [timeRange, setTimeRange] = useState({
         center: Date.now(),
         width: 3 * 24 * 60
@@ -24,21 +30,21 @@ export default function ChartComponent(props) {
             break;
         }
         case "mousedown":
-            console.log("mousedown");
             setPanning(true);
             break;
         case "mouseup":
-            console.log("mouseup");
             setPanning(false);
+            dispatch(setCenter(Math.floor(timeRange.center / 1000)));
             break;
         case "mousemove":
             if (panning) {
-                console.log("mousemove", event.movementX, event.offsetX);
                 setTimeRange({
                     ...timeRange,
                     center: timeRange.center + 1E6 * event.movementX
                 });
             }
+            break;
+        default:
             break;
         }
     };
@@ -73,7 +79,7 @@ export default function ChartComponent(props) {
             chart.config.data.datasets = makeDatasets(props.series);
             chart.update();
         }
-    }, props.series);
+    }, [props.series]);
 
     return <div>
         <canvas

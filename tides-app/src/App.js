@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import Station from './features/station';
 import StationChooser from './features/panel/StationChooser';
+import LowHightTides from './features/panel/LowHighTides';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       </div>
       <div className="side-panel">
         <StationChooser/>
+        <LowHightTides/>
       </div>
     </div>
   );

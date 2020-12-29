@@ -18,7 +18,7 @@ export default function StationChooser(props) {
     }
 
     return <div className="station-dropdown">
-        <label htmlFor="station-select">Station</label>
+        <label className="label" htmlFor="station-select">Station</label>
         <select name="stations" id="station-select" value={stationId}>
             {
             stations.map(station =>
