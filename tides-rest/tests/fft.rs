@@ -2,6 +2,7 @@ use tides_signals::predictions;
 use tides_signals::measurements::Series;
 use tides_rest;
 
+#[ignore]
 #[test]
 fn reconstruct_test() {
     let data = tides_rest::query(

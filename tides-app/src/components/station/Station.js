@@ -82,9 +82,13 @@ export default function Station() {
     </div>;
 
     function computePredictions() {
+        // Use only 70% of the measurements for predictions,
+        // the rest will be use for testing.
+        const trainLen = Math.round(0.7 * measurements.length);
+
         const data_series = Series.from_data(
-            measurements.map(mes => BigInt(mes.timestamp)),
-            measurements.map(mes => mes.value)
+            measurements.slice(0, trainLen).map(mes => BigInt(mes.timestamp)),
+            measurements.slice(0, trainLen).map(mes => mes.value)
         );
         setSeries(data_series);
 
