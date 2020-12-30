@@ -7,7 +7,7 @@ import waves from './waves.svg';
 export default function Loading() {
     const loading = useSelector(select);
 
-    if (loading.length == 0) {
+    if (loading.length === 0) {
         return <div/>;
     }
 
@@ -17,6 +17,6 @@ export default function Loading() {
                 <div key={key}>{message}</div>
             )}
         </div>
-        <img className="loading-waves" src={waves}/>
+        <img className="loading-waves" alt="" src={waves}/>
     </div>
 }

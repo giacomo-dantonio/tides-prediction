@@ -5,7 +5,7 @@ import stations from './stationsSlice';
 import extremes from './extremesSlice';
 import loading from './loadingSlice';
 
-export default {
+const reducers = {
     measurements,
     predictions,
     stations,
@@ -13,3 +13,5 @@ export default {
     extremes,
     loading
 };
+
+export default reducers;

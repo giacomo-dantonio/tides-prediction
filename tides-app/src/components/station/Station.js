@@ -43,7 +43,6 @@ function filterHours(dataSeries) {
 export default function Station() {
     const dispatch = useDispatch();
 
-    // FIXME show animations for fetching and computing states
     const {fetching, value: measurements} = useSelector(selectMeasurements);
     const predictions = useSelector(selectPredictions);
     const stationId = useSelector(selectStation);
@@ -92,7 +91,7 @@ export default function Station() {
         // Compute predictions
         const hourlyMeasurements = filterHours(measurements);
         const timestamps = hourlyMeasurements
-            .slice(Math.max(0, hourlyMeasurements.length - 10))
+            // .slice(Math.max(0, hourlyMeasurements.length - 10))
             .map(mes => mes.timestamp);
         const lastTimestemp = timestamps[timestamps.length - 1];
         const weekHours = 7 /* days */ * 24 /*hours*/;

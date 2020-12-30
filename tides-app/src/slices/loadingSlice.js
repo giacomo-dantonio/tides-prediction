@@ -16,7 +16,7 @@ export const loadingSlice = createSlice({
             state.value.push(action.payload)
         },
         remove: (state, action) => {
-            state.value = state.value.filter(entry => entry.key != action.payload);
+            state.value = state.value.filter(entry => entry.key !== action.payload);
         }
     }
 });

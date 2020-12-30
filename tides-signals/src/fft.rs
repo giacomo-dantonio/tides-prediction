@@ -20,10 +20,15 @@ pub fn reconstruct(samples : &Vec<f32>) -> impl Fn(f32) -> f32 {
         .iter()
         .map(|val| Complex::from(val))
         .collect();
-    let mut fft = compute_fft(&mut input, false);
+    let fft = compute_fft(&mut input, false);
 
-    // FIXME: try setting higher frequencies to zero to smooth the signal
-    let inverse = compute_fft(&mut fft, true);
+    // set lower amplitudes to zero to smooth the signal
+    let n = input.len() as f32;
+    let mut smoothed = fft.iter().cloned().map(|z|
+        if z.norm() > 0.1 * n { z } else { Complex::from(0f32) })
+        .collect();
+
+    let inverse = compute_fft(&mut smoothed, true);
     let len = inverse.len();
 
     move |t : f32| inverse[(t.round() as usize) % len].re / (len as f32)
