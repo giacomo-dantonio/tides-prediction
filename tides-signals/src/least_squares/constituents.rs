@@ -15,9 +15,9 @@ impl Constituent {
     }
 
     // Computes (cos(2π σt), sin(2π σt))
-    pub fn evaluate(&self, t: f32) -> (f32, f32) {
+    pub fn evaluate(&self, t: f32) -> [f32; 2] {
         let argument = 2f32 * PI * self.frequency() * t;
-        (argument.cos(), argument.sin())
+        [argument.cos(), argument.sin()]
     }
 
     // source: https://en.wikipedia.org/wiki/Theory_of_tides#Tidal_constituents
@@ -84,11 +84,11 @@ mod tests {
     #[test]
     fn period_test() {
         for constituent in Constituent::constituents() {
-            let (cos, sin) = constituent.evaluate(0.25 * constituent.period);
+            let [cos, sin] = constituent.evaluate(0.25 * constituent.period);
             assert!((cos - 1f32).abs() > 0.1);
             assert!(sin.abs() > 0.1);
 
-            let (cos, sin) = constituent.evaluate(constituent.period);
+            let [cos, sin] = constituent.evaluate(constituent.period);
             assert!((cos - 1f32).abs() < 1E-5);
             assert!(sin.abs() < 1E-5);
         }

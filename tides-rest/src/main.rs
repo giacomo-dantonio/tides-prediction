@@ -15,9 +15,9 @@ fn main() -> Result<(), minreq::Error> {
         .unwrap();
 
     let mut buf = Vec::new();
-    writeln!(&mut buf, "\"Timestamp\",\"Gauge\"");
+    writeln!(&mut buf, "\"Timestamp\",\"Gauge\"")?;
     for mes in data {
-        writeln!(&mut buf, "\"{}\",{}", mes.timestamp, mes.value);
+        writeln!(&mut buf, "\"{}\",{}", mes.timestamp, mes.value)?;
     }
 
     let path = Path::new("measurements.csv");
